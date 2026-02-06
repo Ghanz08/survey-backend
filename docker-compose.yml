@@ -1,0 +1,77 @@
+version: "3.8"
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: survey-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: survey_lokasi
+      POSTGRES_USER: survey_user
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-SurveyPass2024!}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U survey_user -d survey_lokasi"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Survey Backend API
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: survey-backend
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+
+      # Database
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: survey_lokasi
+      DB_USERNAME: survey_user
+      DB_PASSWORD: ${DB_PASSWORD:-SurveyPass2024!}
+
+      # JWT
+      JWT_SECRET: ${JWT_SECRET:-change-this-to-random-secret-key-in-production}
+      JWT_EXPIRES_IN: 7d
+
+      # Upload
+      MAX_FILE_SIZE: 2097152
+
+      # Rate Limit
+      API_RATE_LIMIT_WINDOW: 15
+      API_RATE_LIMIT_MAX_REQUESTS: 100
+    volumes:
+      - ./src/uploads:/app/src/uploads
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "require('http').get('http://localhost:3000/', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})",
+        ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+volumes:
+  postgres_data:
+    driver: local
+
+networks:
+  default:
+    name: survey-network
