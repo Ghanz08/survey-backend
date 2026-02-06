@@ -3,7 +3,7 @@ require("dotenv-safe").config();
 module.exports = {
   development: {
     username: process.env.DB_USERNAME,
-    password: process.env.DB_PASSWORD,
+    password: process.env.DB_PASSWORD || undefined,
     database: process.env.DB_NAME,
     host: process.env.DB_HOST,
     port: process.env.DB_PORT || 5432,
@@ -23,7 +23,7 @@ module.exports = {
   },
   test: {
     username: process.env.DB_USERNAME,
-    password: process.env.DB_PASSWORD,
+    password: process.env.DB_PASSWORD || undefined,
     database: process.env.DB_NAME + "_test",
     host: process.env.DB_HOST,
     port: process.env.DB_PORT || 5432,
@@ -38,7 +38,7 @@ module.exports = {
   },
   production: {
     username: process.env.DB_USERNAME,
-    password: process.env.DB_PASSWORD,
+    password: process.env.DB_PASSWORD || undefined,
     database: process.env.DB_NAME,
     host: process.env.DB_HOST,
     port: process.env.DB_PORT || 5432,
