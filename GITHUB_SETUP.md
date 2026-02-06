@@ -8,16 +8,17 @@
 2. Klik **"+"** di pojok kanan atas → **"New repository"**
 3. **Repository name**: `survey-backend` (atau nama lain)
 4. **Description**: `Backend REST API - Survey Lokasi Objek`
-5. **Visibility**: 
+5. **Visibility**:
    - ✅ **Private** (recommended untuk production)
    - atau Public (jika mau open source)
-6. **Initialize repository**: 
+6. **Initialize repository**:
    - ❌ JANGAN centang "Add a README file"
    - ❌ JANGAN centang "Add .gitignore"
    - ❌ JANGAN centang "Choose a license"
 7. Klik **"Create repository"**
 
 **Setelah dibuat, akan muncul URL:**
+
 ```
 https://github.com/YOUR_USERNAME/survey-backend.git
 ```
@@ -53,6 +54,7 @@ git push -u origin main
 ```
 
 **Jika diminta login:**
+
 - **Username**: GitHub username Anda
 - **Password**: Gunakan **Personal Access Token** (bukan password GitHub)
 
@@ -73,11 +75,13 @@ git push -u origin main
 7. **COPY TOKEN** dan simpan di tempat aman!
 
 **Format token:**
+
 ```
 ghp_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 ```
 
 **Gunakan token sebagai password saat push:**
+
 ```bash
 Username: your_github_username
 Password: ghp_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
@@ -118,6 +122,7 @@ git branch
 ```
 
 **Buka browser ke:**
+
 ```
 https://github.com/YOUR_USERNAME/survey-backend
 ```
@@ -131,6 +136,7 @@ Seharusnya semua file sudah ter-upload! ✅
 Setelah repo ready, update **DEPLOY_DOCKER.md Step 4** untuk clone dari GitHub instead of rsync.
 
 **File yang akan ter-upload:**
+
 ```
 ✅ app.js
 ✅ package.json

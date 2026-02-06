@@ -76,7 +76,7 @@ git push -u origin main
 **Di VPS:**
 
 ```bash
-# Clone dari GitHub  
+# Clone dari GitHub
 cd /var/www
 git clone https://github.com/YOUR_USERNAME/survey-backend.git
 cd survey-backend
@@ -88,7 +88,8 @@ ls -la
 **Note:** Ganti `YOUR_USERNAME` dengan GitHub username Anda.
 
 # Tunggu sampai selesai upload
-```
+
+````
 
 ### 5️⃣ Setup Environment Variables
 
@@ -97,14 +98,13 @@ ls -la
 ```bash
 cd /var/www/survey-backend
 
-# Generate secure secrets
-DB_PASSWORD=$(openssl rand -base64 24 | tr -d "=+/" | cut -c1-20)
+# Generate JWT secret only (DB password kosong untuk peer auth)
 JWT_SECRET=$(openssl rand -base64 32)
 
 # Create .env file
 cat > .env << EOF
-# Database Password
-DB_PASSWORD=$DB_PASSWORD
+# Database Password (kosong - menggunakan peer authentication VPS PostgreSQL)
+DB_PASSWORD=
 
 # JWT Secret
 JWT_SECRET=$JWT_SECRET
@@ -112,9 +112,11 @@ EOF
 
 # Verify .env
 cat .env
-```
+````
 
-**PENTING:** Simpan password dan JWT secret ini di tempat aman!
+**PENTING:** Simpan JWT secret ini di tempat aman!
+
+**Note:** Backend akan connect ke PostgreSQL VPS yang sudah ada (`survey_lokasi` database, `postgres` user).
 
 ### 6️⃣ Build & Start Containers
 
