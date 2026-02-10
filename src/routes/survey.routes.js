@@ -19,7 +19,7 @@ router.post(
   uploadFiles,
   handleUploadError,
   compressFoto,
-  surveyController.createSurvey
+  surveyController.createSurvey,
 );
 
 /**
@@ -47,7 +47,7 @@ router.put(
   uploadFiles,
   handleUploadError,
   compressFoto,
-  surveyController.updateSurvey
+  surveyController.updateSurvey,
 );
 
 /**
@@ -58,8 +58,15 @@ router.put(
 router.post("/:id/submit", authenticate, surveyController.submitSurvey);
 
 /**
+ * @route   POST /api/survey/:id/verify
+ * @desc    Verify survey (change status to TERVERIFIKASI) - Admin only
+ * @access  Private (Admin only)
+ */
+router.post("/:id/verify", authenticate, surveyController.verifySurvey);
+
+/**
  * @route   DELETE /api/survey/:id
- * @desc    Delete survey (only if status = TERSIMPAN)
+ * @desc    Delete survey (only if status = TERSIMPAN or TERKIRIM, not TERVERIFIKASI)
  * @access  Private (Surveyor & Admin)
  */
 router.delete("/:id", authenticate, surveyController.deleteSurvey);

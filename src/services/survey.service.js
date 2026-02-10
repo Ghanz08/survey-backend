@@ -8,7 +8,7 @@ class SurveyService {
       // Validate required fields
       if (!surveyData.longitude_x || !surveyData.latitude_y) {
         throw new Error(
-          "Koordinat GPS (longitude_x dan latitude_y) wajib diisi"
+          "Koordinat GPS (longitude_x dan latitude_y) wajib diisi",
         );
       }
 
@@ -169,6 +169,11 @@ class SurveyService {
         throw new Error("Anda tidak memiliki akses untuk mengubah survey ini");
       }
 
+      // Cannot edit if verified
+      if (survey.status === "TERVERIFIKASI") {
+        throw new Error("Survey yang sudah terverifikasi tidak dapat diubah");
+      }
+
       // Can only edit if not submitted
       if (survey.tgl_submit) {
         throw new Error("Survey yang sudah disubmit tidak dapat diubah");
@@ -177,13 +182,13 @@ class SurveyService {
       // Validate GPS coordinates if provided
       if (surveyData.longitude_x || surveyData.latitude_y) {
         const longitude = parseFloat(
-          surveyData.longitude_x || survey.longitude_x
+          surveyData.longitude_x || survey.longitude_x,
         );
         const latitude = parseFloat(surveyData.latitude_y || survey.latitude_y);
 
         if (isNaN(longitude) || longitude < -180 || longitude > 180) {
           throw new Error(
-            "Longitude tidak valid (harus antara -180 sampai 180)"
+            "Longitude tidak valid (harus antara -180 sampai 180)",
           );
         }
 
@@ -275,7 +280,12 @@ class SurveyService {
         throw new Error("Survey tidak ditemukan");
       }
 
-      // Admin can delete any survey
+      // Check if survey is verified - cannot be deleted by anyone
+      if (survey.status === "TERVERIFIKASI") {
+        throw new Error("Survey yang sudah terverifikasi tidak dapat dihapus");
+      }
+
+      // Admin can delete any survey (except verified)
       if (userRole === 1) {
         await survey.destroy();
         return { message: "Survey berhasil dihapus" };
@@ -285,7 +295,7 @@ class SurveyService {
       if (userRole === 2) {
         if (survey.id_user !== userId) {
           throw new Error(
-            "Anda tidak memiliki akses untuk menghapus survey ini"
+            "Anda tidak memiliki akses untuk menghapus survey ini",
           );
         }
 
@@ -298,6 +308,50 @@ class SurveyService {
       }
 
       throw new Error("Anda tidak memiliki akses untuk menghapus survey");
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  // Verify survey (only admin can verify)
+  async verifySurvey(surveyId, userId, userRole) {
+    try {
+      // Only admin can verify
+      if (userRole !== 1) {
+        throw new Error("Hanya admin yang dapat memverifikasi survey");
+      }
+
+      const survey = await Survey.findByPk(surveyId);
+
+      if (!survey) {
+        throw new Error("Survey tidak ditemukan");
+      }
+
+      // Survey must be submitted before verification
+      if (!survey.tgl_submit) {
+        throw new Error(
+          "Hanya survey yang sudah disubmit yang dapat diverifikasi",
+        );
+      }
+
+      // Check if already verified
+      if (survey.status === "TERVERIFIKASI") {
+        throw new Error("Survey sudah terverifikasi sebelumnya");
+      }
+
+      await survey.update({
+        status: "TERVERIFIKASI",
+      });
+
+      return await Survey.findByPk(surveyId, {
+        include: [
+          {
+            model: User,
+            as: "user",
+            attributes: ["id_user", "username", "no_hp", "alamat", "role_user"],
+          },
+        ],
+      });
     } catch (error) {
       throw error;
     }

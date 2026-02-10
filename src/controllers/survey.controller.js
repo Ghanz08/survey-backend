@@ -142,3 +142,22 @@ exports.deleteSurvey = async (req, res) => {
     return errorResponse(res, error.message, 400);
   }
 };
+
+// Verify survey (admin only)
+exports.verifySurvey = async (req, res) => {
+  try {
+    const survey = await surveyService.verifySurvey(
+      req.params.id,
+      req.user.id_user,
+      req.user.role_user,
+    );
+
+    // Clean file paths before response
+    const cleanedSurvey = cleanSurveyResponse(survey);
+
+    return successResponse(res, cleanedSurvey, "Survey berhasil diverifikasi");
+  } catch (error) {
+    console.error("Error verifying survey:", error);
+    return errorResponse(res, error.message, 400);
+  }
+};

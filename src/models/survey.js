@@ -100,15 +100,15 @@ module.exports = (sequelize, DataTypes) => {
         defaultValue: "TERSIMPAN",
         field: "status",
         validate: {
-          isIn: [["TERSIMPAN", "TERKIRIM"]],
+          isIn: [["TERSIMPAN", "TERKIRIM", "TERVERIFIKASI"]],
         },
-        comment: "Status survey: TERSIMPAN atau TERKIRIM",
+        comment: "Status survey: TERSIMPAN, TERKIRIM, atau TERVERIFIKASI",
       },
     },
     {
       tableName: "t_data_survey",
       timestamps: false,
-    }
+    },
   );
 
   // Associations
