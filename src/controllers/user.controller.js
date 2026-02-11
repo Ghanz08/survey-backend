@@ -13,7 +13,7 @@ exports.getAllUsers = async (req, res) => {
 
     const result = await userService.getAllUsers(filters);
 
-    return successResponse(res, result, "Data user berhasil diambil");
+    return successResponse(res, "Data user berhasil diambil", result);
   } catch (error) {
     console.error("Error getting users:", error);
     return errorResponse(res, error.message, 400);
@@ -25,7 +25,7 @@ exports.getUserById = async (req, res) => {
   try {
     const user = await userService.getUserById(req.params.id);
 
-    return successResponse(res, user, "User berhasil diambil");
+    return successResponse(res, "User berhasil diambil", user);
   } catch (error) {
     console.error("Error getting user:", error);
     return errorResponse(res, error.message, 404);
@@ -37,7 +37,7 @@ exports.createUser = async (req, res) => {
   try {
     const user = await userService.createUser(req.body);
 
-    return successResponse(res, user, "User berhasil dibuat", 201);
+    return successResponse(res, "User berhasil dibuat", user, 201);
   } catch (error) {
     console.error("Error creating user:", error);
     return errorResponse(res, error.message, 400);
@@ -49,7 +49,7 @@ exports.updateUser = async (req, res) => {
   try {
     const user = await userService.updateUser(req.params.id, req.body);
 
-    return successResponse(res, user, "User berhasil diupdate");
+    return successResponse(res, "User berhasil diupdate", user);
   } catch (error) {
     console.error("Error updating user:", error);
     return errorResponse(res, error.message, 400);

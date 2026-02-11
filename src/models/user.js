@@ -102,11 +102,10 @@ module.exports = (sequelize, DataTypes) => {
     return await bcrypt.compare(password, this.password);
   };
 
-  // Instance method untuk hide password dan KTP dari response
+  // Instance method untuk hide password dari response
   User.prototype.toJSON = function () {
     const values = { ...this.get() };
     delete values.password;
-    delete values.ktp; // Hide KTP untuk keamanan
     return values;
   };
 
